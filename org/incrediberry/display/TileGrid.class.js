@@ -11,6 +11,8 @@
 			Namespace.import (this, 'org.incrediberry.utils.NumberUtils' );
 			Namespace.import (this, 'org.incrediberry.display.Tile' );
 
+			TileGrid.Super.call(this);
+
 			// Member Vars
 			this._displayWidth = 1;
 			this._displayHeight = 1;

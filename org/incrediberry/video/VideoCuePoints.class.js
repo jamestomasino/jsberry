@@ -12,7 +12,7 @@
 			Namespace.import ( this, 'org.incrediberry.utils.Delegate' );
 			Namespace.import ( this, 'org.incrediberry.video.CuePoint' );
 
-			Keyboard.Super.call(this);
+			VideoCuePoints.Super.call(this);
 
 			// Store references for removeEventListeners later
 			this._onTimeUpdateDelegate = this.Delegate.createDelegate ( this, this._onTimeUpdate );

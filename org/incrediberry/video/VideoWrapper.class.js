@@ -20,6 +20,8 @@
 			Namespace.import ( this, 'org.incrediberry.video.VideoCuePoints' );
 			Namespace.import ( this, 'jQuery' );
 
+			VideoWrapper.Super.call(this);
+
 			// Store references for removeEventListeners later
 			this._videoPlayDelegate = this.Delegate.createDelegate ( this, this._videoPlay);
 			this._onPlayDelegate    = this.Delegate.createDelegate ( this, this._onPlay );

@@ -15,6 +15,8 @@
 			Namespace.import (this, 'org.incrediberry.data.BitArray' );
 			Namespace.import (this, 'jQuery');
 
+			Tile.Super.call(this);
+
 			this._domObj = domObj;
 			this._tileWidth = 1;
 			this._tileHeight = 1;
