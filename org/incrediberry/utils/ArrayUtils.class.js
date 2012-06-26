@@ -1,26 +1,19 @@
 (function(){
-    function ArrayUtils() {}
 
-	ArrayUtils.getInst = function()
-	{
-		if(ArrayUtils._inst === undefined)
-		{
-			ArrayUtils._inst = new ArrayUtils();
-		}
-		return ArrayUtils._inst;
-	};
+	var ArrayUtils = my.Class({
 
-	var p = ArrayUtils.prototype;
+		STATIC: {
 
-	p.isArray = function ( a )
-	{
-		return ( Object.prototype.toString.call( a ) === '[object Array]' )
-	}
+			isArray: function ( a ) {
+				return ( Object.prototype.toString.call( a ) === '[object Array]' )
+			}
+		},
+
+		constructor: function() {},
+	});
 
 	var namespace = new Namespace ( 'org.incrediberry.utils' );
-
-	namespace.ArrayUtils = ArrayUtils.getInst();
+	namespace.ArrayUtils = ArrayUtils;
 
 })();
-
 

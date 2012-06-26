@@ -1,27 +1,20 @@
 (function(){
-    function Delegate() {}
 
-	Delegate.getInst = function()
-	{
-		if(Delegate._inst === undefined)
-		{
-			Delegate._inst = new Delegate();
-		}
-		return Delegate._inst;
-	};
+	var Delegate = my.Class({
 
-	var p = Delegate.prototype;
+		STATIC: {
+			createDelegate: function (object, method) {
+				var shim = function() {
+					return method.apply(object, arguments);
+				}
+				return shim;
+			}
+		},
 
-	p.createDelegate = function (object, method)
-	{
-		var shim =  function()
-		{
-			return method.apply(object, arguments);
-		}
-		return shim;
-	}
+		constructor: function() {},
+	});
+
 	var namespace = new Namespace ( 'org.incrediberry.utils' );
-
-	namespace.Delegate = Delegate.getInst();
+	namespace.Delegate = Delegate;
 
 })();

@@ -1,25 +1,19 @@
 (function(){
-    function NumberUtils() {}
 
-	NumberUtils.getInst = function()
-	{
-		if(NumberUtils._inst === undefined)
-		{
-			NumberUtils._inst = new NumberUtils();
-		}
-		return NumberUtils._inst;
-	};
+	var NumberUtils = my.Class({
 
-	var p = NumberUtils.prototype;
+		STATIC: {
+			isNumeric = function ( n ) {
+				return !isNaN(parseFloat(n)) && isFinite(n);
+			}
+		},
 
-	p.isNumeric = function ( n )
-	{
-		return !isNaN(parseFloat(n)) && isFinite(n);
-	}
+		constructor: function() {},
+	});
 
 	var namespace = new Namespace ( 'org.incrediberry.utils' );
-
-	namespace.NumberUtils = NumberUtils.getInst();
+	namespace.NumberUtils = NumberUtils;
 
 })();
+
 
