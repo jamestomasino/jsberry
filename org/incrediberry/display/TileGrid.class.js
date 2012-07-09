@@ -11,8 +11,6 @@
 			Namespace.import (this, 'org.incrediberry.utils.NumberUtils' );
 			Namespace.import (this, 'org.incrediberry.display.Tile' );
 
-			TileGrid.Super.call(this);
-
 			// Member Vars
 			this._displayWidth = 1;
 			this._displayHeight = 1;
@@ -90,6 +88,9 @@
 		},
 
 		goto: function ( x, y, animate ) {
+			var newTile = this.getTileByPos (x,y);
+			if (newTile) newTile.setActive (true);
+
 			this._scrollEnabled = false;
 			x = this.NumberUtils.isNumeric (x) ? x : 0;
 			y = this.NumberUtils.isNumeric (y) ? y : 0;
@@ -112,12 +113,16 @@
 			} else {
 				this._scrollContainer.css( 'left', xPos );
 				this._scrollContainer.css( 'top', yPos );
-				this._scrollEnabled = true;
+				this._swipeComplete();
 			}
-
 		},
 
 		goToID: function ( id, animate ) {
+			var xy = this.getPosByID (id);
+			if (xy) this.goto (xy.x, xy.y, animate);
+		},
+
+		getPosByID: function ( id ) {
 			var item = this._getJQueryItem ( id );
 			if (item != null) {
 				var itemid = item.attr('id');
@@ -127,9 +132,23 @@
 				}
 				if (i >= 0) {
 					var pos = this._allPositions[i];
-					this.goto (pos['x'], pos['y'], animate);
+					return { 'x':pos['x'], 'y':pos['y'] };
+				} else {
+					return null;
 				}
 			}
+		},
+
+		getIDByPos: function ( x, y ) {
+			var tile = this.getTileByPos(x,y);
+			if (tile) return tile.getID();
+			else return null;
+		},
+
+		getTileByPos: function ( x, y ) {
+			var index = x + ( y * this._matrixWidth );
+			var tile = this._matrix[index];
+			return tile;
 		},
 
 		swipeUp: function () {
@@ -148,11 +167,7 @@
 					-- this._y;
 				}
 
-				if (animate) {
-					this._scrollContainer.stop (true, true);
-					this._scrollEnabled = false;
-					this._scrollContainer.animate({ top: '-=' + this._displayHeight }, this._slideSpeed, null, this.Delegate.createDelegate ( this, this._swipeComplete ) );
-				}
+				this.goto ( this._x, this._y, true);
 			}
 		},
 
@@ -172,11 +187,7 @@
 					++ this._y;
 				}
 
-				if (animate) {
-					this._scrollContainer.stop (true, true);
-					this._scrollEnabled = false;
-					this._scrollContainer.animate({ top: '+=' + this._displayHeight }, this._slideSpeed, null, this.Delegate.createDelegate ( this, this._swipeComplete ) );
-				}
+				if (animate) this.goto ( this._x, this._y, true);
 			}
 		},
 
@@ -195,11 +206,7 @@
 					-- this._x;
 				}
 
-				if (animate) {
-					this._scrollContainer.stop (true, true);
-					this._scrollEnabled = false;
-					this._scrollContainer.animate({ left: '-=' + this._displayWidth}, this._slideSpeed, null, this.Delegate.createDelegate ( this, this._swipeComplete ) );
-				}
+				this.goto ( this._x, this._y, true);
 			}
 		},
 
@@ -219,16 +226,18 @@
 					++ this._x;
 				}
 
-				if (animate) {
-					this._scrollContainer.stop (true, true);
-					this._scrollEnabled = false;
-					this._scrollContainer.animate({ left: '+=' + this._displayWidth}, this._slideSpeed, null, this.Delegate.createDelegate ( this, this._swipeComplete ) );
-				}
+				this.goto ( this._x, this._y, true);
 			}
 		},
 
 		_swipeComplete: function () {
 			this._scrollEnabled = true;
+			var newtile = this.getTileByPos (this._x, this._y);
+			for ( var i = 0; i < this._allTiles.length; ++i ) {
+				var tile = this._allTiles[i];
+				if (tile != newtile)
+					tile.setActive ( false );
+			}
 		},
 
 		_getJQueryItem: function ( item ) {

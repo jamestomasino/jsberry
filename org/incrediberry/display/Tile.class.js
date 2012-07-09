@@ -11,11 +11,9 @@
 		},
 
 		constructor: function( domObj, width, height, id ) {
-			Namespace.import (this, 'org.incrediberry.utils.NumberUtils' );
-			Namespace.import (this, 'org.incrediberry.data.BitArray' );
+			Namespace.import (this, 'org.tomasino.utils.NumberUtils' );
+			Namespace.import (this, 'org.tomasino.data.BitArray' );
 			Namespace.import (this, 'jQuery');
-
-			Tile.Super.call(this);
 
 			this._domObj = domObj;
 			this._tileWidth = 1;
@@ -26,6 +24,10 @@
 			this.setGridSize ( width, height );
 			this._navDirections = new this.BitArray ([0,0,0,0]);
 			this._isDebug = false;
+		},
+
+		getID: function () {
+			return this._domObj.attr('id');
 		},
 
 		setGridSize: function ( width, height ) {
@@ -70,6 +72,20 @@
 			comboClass += this._navDirections.get ( 2 ) ? 'd' : '';
 			comboClass += this._navDirections.get ( 3 ) ? 'l' : '';
 			this._domObj.addClass ( comboClass );
+		},
+
+		setActive: function (val) {
+			switch (val)
+			{
+				case true:
+					this._domObj.removeClass ( 'inactive' );
+					this._domObj.addClass ( 'active' );
+					break;
+				case false:
+					this._domObj.removeClass ( 'active' );
+					this._domObj.addClass ( 'inactive' );
+					break;
+			}
 		},
 
 		isEnabled: function () {
