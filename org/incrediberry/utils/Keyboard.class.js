@@ -1,6 +1,6 @@
 (function() {
 
-	var Keyboard = my.Class( org.incrediberry.events.EventDispatcher, {
+	var Keyboard = my.Class( Namespace.import ( null, 'org.incrediberry.events.EventDispatcher' ), {
 
 		STATIC: {
 			EVENT_KEY_UP: 'keyboard_event_key_up',

@@ -1,6 +1,6 @@
 (function() {
 
-	var TileGrid = my.Class( org.incrediberry.events.EventDispatcher, {
+	var TileGrid = my.Class( Namespace.import ( null, 'org.incrediberry.events.EventDispatcher' ), {
 
 		STATIC: {},
 

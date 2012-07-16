@@ -24,7 +24,7 @@
 		parent = Namespace.global,
 		currentPart = '';
 
-		for(var i = 0, length = parts.length; i < length; i++) {
+		for ( var i = 0, length = parts.length; i < length; i++ ) {
 			currentPart = parts[i];
 			if (currentPart != '*') {
 				// if it doesn't exist, just ignore
@@ -43,6 +43,8 @@
 			}
 		}
 
+		if (scope === null) return parent;
+
 		if (currentPart == '*') {
 			for ( id in parent )
 			{
@@ -50,15 +52,17 @@
 					throw ('ERROR::[ Namespace collision: ' + namespaceString + ' ]' );
 				} else {
 					scope[id] = parent[id];
-					return;
+					return scope[id];
 				}
 			}
 		} else {
 			if ( typeof scope[currentPart] != 'undefined') {
-				throw ('ERROR::[ Namespace collision: ' + namespaceString + ' ]' );
+				if (scope[currentPart] != parent)
+					if (console && console.log) console.log ('Warning::[ Namespace collision: ' + namespaceString + ' ]');
+				return parent;
 			} else {
 				scope[currentPart] = parent;
-				return;
+				return parent;
 			}
 		}
 

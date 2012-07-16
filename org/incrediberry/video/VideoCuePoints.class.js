@@ -1,6 +1,6 @@
 (function() {
 
-	var VideoCuePoints = my.Class( org.incrediberry.events.EventDispatcher, {
+	var VideoCuePoints = my.Class( Namespace.import ( null, 'org.incrediberry.events.EventDispatcher' ), {
 
 		STATIC: {
 			CUE_POINT_EVENT: 'VideoCuePoints_CUE_POINT_EVENT',

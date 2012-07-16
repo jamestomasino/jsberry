@@ -1,6 +1,6 @@
 (function() {
 
-	var VideoWrapper = my.Class( org.incrediberry.events.EventDispatcher, {
+	var VideoWrapper = my.Class( Namespace.import ( null, 'org.incrediberry.events.EventDispatcher' ), {
 
 		STATIC: {
 			instances: [],
@@ -14,7 +14,7 @@
 		},
 
 		constructor: function (id, video, image, objectsToBind) {
-			Namespace.import ( this, 'org.incrediberry.utils.Debug' );
+			Namespace.import ( this, 'org.incrediberry.events.Evt' );
 			Namespace.import ( this, 'org.incrediberry.utils.Delegate' );
 			Namespace.import ( this, 'org.incrediberry.utils.ArrayUtils' );
 			Namespace.import ( this, 'org.incrediberry.video.VideoCuePoints' );
@@ -47,10 +47,9 @@
 			this._objectsToBind         = [];
 			this.name                   = "VideoWrapper[" + this._idStr + "]";
 
-			this.Debug.enabled = true;
-
 			VideoWrapper.instances.push ( this );
 
+			this._userCuePoints.addEventListener ( this.VideoCuePoints.CUE_POINT_EVENT, this.Delegate.createDelegate ( this, this._onCuePoint ) );
 
 			if (objectsToBind != null) {
 				if ( this.ArrayUtils.isArray (objectsToBind ) ) {
@@ -106,9 +105,9 @@
 
 		closeVideo: function () {
 			if ( this._video != null ) {
-				this._video.removeEventListener ( "play", this._onPlayDelegate );
-				this._video.removeEventListener ( "pause", this._onPauseDelegate );
-				this._video.removeEventListener ( "ended", this._onEndedDelegate );
+				this.Evt.removeEvent ( this._video, "play", this._onPlayDelegate );
+				this.Evt.removeEvent ( this._video, "pause", this._onPauseDelegate );
+				this.Evt.removeEvent ( this._video, "ended", this._onEndedDelegate );
 				this._video.pause();
 				this._video.src = '';
 				this._video.load();
@@ -130,9 +129,9 @@
 			this._userCuePoints.removeCuePoint ( timeNameOrCuePoint );
 		},
 
-		onCuePoint: function ( callback ) {
-			this._userCuePoints.onCuePoint(callback)
-		},
+		//onCuePoint: function ( callback ) {
+		//	this._userCuePoints.onCuePoint(callback)
+		//},
 
 		onPlay: function ( callback ) {
 			this._userPlayCallbacks.push ( callback );
@@ -282,7 +281,7 @@
 					this._constructHTML(true);
 					this._userCuePoints.setVideo ( _video );
 
-					this._video.addEventListener ('canplay', this._videoPlayDelegate );
+					this.Evt.addEvent ( this._video, 'canplay', this._videoPlayDelegate );
 					this._video.load(); // Unnecessary step in chrome. Should help on iPad
 
 					if ( !this._keepEvents ) {
@@ -293,7 +292,7 @@
 		},
 
 		_videoPlay: function (e) {
-			this._video.removeEventListener ('canplay', this._videoPlayDelegate);
+			this.Evt.removeEvent ( this._video, 'canplay', this._videoPlayDelegate);
 			if (!this._cuePoints) {
 				this._cuePoints = new this.VideoCuePoints ( this._video );
 				this._cuePoints.addCuePoint ( 0.2, 'start');
@@ -301,9 +300,9 @@
 			}
 
 			// Add Event Listeners!
-			this._video.addEventListener ( "play", this._onPlayDelegate );
-			this._video.addEventListener ( "pause", this._onPauseDelegate );
-			this._video.addEventListener ( "ended", this._onEndedDelegate );
+			this.Evt.addEvent ( this._video, "play", this._onPlayDelegate );
+			this.Evt.addEvent ( this._video, "pause", this._onPauseDelegate );
+			this.Evt.addEvent ( this._video, "ended", this._onEndedDelegate );
 
 			this._video.play();
 		},
@@ -340,6 +339,11 @@
 			if (obj.name == 'start') {
 				this._image.hide();
 			}
+		},
+
+		_onCuePoint: function ( o ) {
+			this.dispatchEvent ( this.VideoCuePoints.CUE_POINT_EVENT, o );
+			//name: cuePoint.name, time: cuePoint.time, type: cuePoint.type
 		},
 
 		_constructHTML: function (isVideoActive) {

@@ -1,6 +1,6 @@
 (function() {
 
-	var Tile = my.Class( org.incrediberry.events.EventDispatcher, {
+	var Tile = my.Class( Namespace.import ( null, 'org.incrediberry.events.EventDispatcher' ), {
 
 		STATIC: {
 			ENABLED_CHANGE: 'Tile_ENABLED_CHANGE',
