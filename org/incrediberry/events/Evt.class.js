@@ -3,12 +3,15 @@
 	var Evt = my.Class({
 
 		STATIC: {
+			// Keep reference to every event for easier cleanup
 			_listEvents: [],
 
+			// Add internal reference to event
 			_add: function(node, sEventName, fHandler, guid) {
 				Evt._listEvents.push(arguments);
 			},
 
+			// remove internal reference to event
 			_remove: function(node, sEventName, fHandler, guid) {
 				if ( arguments.length == 3 ) {
 					var i = Evt._listEvents.length; while (i--) {
@@ -27,6 +30,7 @@
 				}
 			},
 
+			// Based on other 3 properties, retrieve the 4th (unique event guid)
 			_getGUID: function (node, sEventName, fHandler ) {
 				var i = Evt._listEvents.length; while (i--) {
 					if ( Evt._listEvents[i][0] == arguments[0] && Evt._listEvents[i][1] == arguments[1] && Evt._listEvents[i][2] == arguments[2]  )
@@ -36,6 +40,7 @@
 				return;
 			},
 
+			// Using stored eventst list, clean up everything
 			_flush: function(){
 				var i, item;
 				for(i = Evt._listEvents.length - 1; i >= 0; i = i - 1) {
