@@ -5,11 +5,11 @@
 		STATIC: {
 			_listEvents: [],
 
-			_add: function(node, sEventName, fHandler) {
+			_add: function(node, sEventName, fHandler, guid) {
 				Evt._listEvents.push(arguments);
 			},
 
-			_remove: function(node, sEventName, fHandler) {
+			_remove: function(node, sEventName, fHandler, guid) {
 				if ( arguments.length == 3 ) {
 					var i = Evt._listEvents.length; while (i--) {
 						if ( Evt._listEvents[i][0] == arguments[0] && Evt._listEvents[i][1] == arguments[1] && Evt._listEvents[i][2] == arguments[2]  )
@@ -17,6 +17,23 @@
 						break;
 					}
 				}
+				else
+				{
+					var i = Evt._listEvents.length; while (i--) {
+						if ( Evt._listEvents[i][0] == arguments[0] && Evt._listEvents[i][1] == arguments[1] && Evt._listEvents[i][2] == arguments[2] && && Evt._listEvents[i][3] == arguments[3] )
+						Evt._listEvents.splice(i, 1);
+						break;
+					}
+				}
+			},
+
+			_getGUID: function (node, sEventName, fHandler ) {
+				var i = Evt._listEvents.length; while (i--) {
+					if ( Evt._listEvents[i][0] == arguments[0] && Evt._listEvents[i][1] == arguments[1] && Evt._listEvents[i][2] == arguments[2]  )
+						if (Evt._listEvents[i].length > 3)
+							return Evt._listEvents[i][3];
+				}
+				return;
 			},
 
 			_flush: function(){
@@ -32,7 +49,6 @@
 					if(item[0].detachEvent) {
 						item[0].detachEvent(item[1], item[2]);
 					}
-					item[0][item[1]] = null;
 				}
 			},
 
@@ -40,15 +56,16 @@
 				if (obj.addEventListener) {
 					obj.addEventListener( type, fn, false );
 					Evt._add(obj, type, fn);
-				}
-				else if (obj.attachEvent) {
-					obj["e"+type+fn] = fn;
-					obj[type+fn] = function() { obj["e"+type+fn]( window.event ); }
-					obj.attachEvent( "on"+type, obj[type+fn] );
-					Evt._add(obj, type, fn);
-				}
-				else {
-					obj["on"+type] = obj["e"+type+fn];
+				} else if (obj.attachEvent) {
+					obj["eventGUID"] = obj["eventGUID"] || 1;
+					obj["eventGUID"]++;
+					var guid = obj["eventGUID"];
+					var def = "e_" + type + "_def_" + guid;
+					var fncall =  "e_" + type + "_fn_"  + guid;
+					obj[ def ] = fn;
+					obj[ fncall ] = function() { obj[def]( window.event ); }
+					obj.attachEvent( "on" + type, obj[fncall] );
+					Evt._add(obj, type, fn, guid);
 				}
 			},
 
@@ -56,15 +73,14 @@
 				if (obj.removeEventListener) {
 					obj.removeEventListener( type, fn, false );
 					Evt._remove(obj, type, fn);
-				}
-				else if (obj.detachEvent) {
-					obj["e"+type+fn] = null;
-					obj[type+fn] = null;
-					obj.detachEvent( "on"+type, obj[type+fn] );
-					Evt._remove(obj, type, fn);
-				}
-				else {
-					obj["on"+type] = null;
+				} else if (obj.detachEvent) {
+					var guid = Evt._getGUID ( obj, type, fn );
+					var def = "e_" + type + "_def_" + guid;
+					var fncall =  "e_" + type + "_fn_"  + guid;
+					obj[def] = null;
+					obj[fncall] = null;
+					obj.detachEvent( "on"+type, obj[fncall] );
+					Evt._remove(obj, type, fn, guid);
 				}
 			}
 
