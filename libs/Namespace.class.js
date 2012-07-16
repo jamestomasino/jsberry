@@ -43,7 +43,7 @@
 			}
 		}
 
-		if (scope === null) return parent;
+		if (scope === null) return parent; // If no scoping, just return class and be done
 
 		if (currentPart == '*') {
 			for ( id in parent )
@@ -57,8 +57,9 @@
 			}
 		} else {
 			if ( typeof scope[currentPart] != 'undefined') {
-				if (scope[currentPart] != parent)
-					if (console && console.log) console.log ('Warning::[ Namespace collision: ' + namespaceString + ' ]');
+				if (scope[currentPart] != parent) { // If scoped method already exists, check if they're the same
+					throw ('ERROR::[ Namespace collision: ' + namespaceString + ' ]');
+				}
 				return parent;
 			} else {
 				scope[currentPart] = parent;
