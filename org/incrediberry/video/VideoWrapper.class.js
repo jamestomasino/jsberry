@@ -46,7 +46,7 @@
 			this._isEnded               = false;
 			this._wrapper               = this.jQuery('#' + this._idStr);
 			this._objectsToBind         = [];
-			this.name                   = "VideoWrapper[" + this._idStr + "]";
+			this.name                   = 'VideoWrapper[' + this._idStr + ']';
 
 			VideoWrapper.instances.push ( this );
 
@@ -106,9 +106,9 @@
 
 		closeVideo: function () {
 			if ( this._video != null ) {
-				this.Evt.removeEvent ( this._video, "play", this._onPlayDelegate );
-				this.Evt.removeEvent ( this._video, "pause", this._onPauseDelegate );
-				this.Evt.removeEvent ( this._video, "ended", this._onEndedDelegate );
+				this.Evt.removeEvent ( this._video, 'play', this._onPlayDelegate );
+				this.Evt.removeEvent ( this._video, 'pause', this._onPauseDelegate );
+				this.Evt.removeEvent ( this._video, 'ended', this._onEndedDelegate );
 				this._video.pause();
 				this._video.src = '';
 				this._video.load();
@@ -201,6 +201,8 @@
 						this._video.play();
 					}
 				}
+			} else {
+				this._videoClick();
 			}
 		},
 
