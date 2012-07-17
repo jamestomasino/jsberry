@@ -1,5 +1,5 @@
 (function() {
-
+	"use strict";
 	var Tile = my.Class( Namespace.import ( null, 'org.incrediberry.events.EventDispatcher' ), {
 
 		STATIC: {

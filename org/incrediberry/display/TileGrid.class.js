@@ -1,5 +1,5 @@
 (function() {
-
+	"use strict";
 	var TileGrid = my.Class( Namespace.import ( null, 'org.incrediberry.events.EventDispatcher' ), {
 
 		STATIC: {},

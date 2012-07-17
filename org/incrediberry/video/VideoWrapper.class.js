@@ -1,4 +1,5 @@
 (function() {
+	"use strict";
 
 	var VideoWrapper = my.Class( Namespace.import ( null, 'org.incrediberry.events.EventDispatcher' ), {
 

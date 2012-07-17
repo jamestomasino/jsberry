@@ -1,5 +1,5 @@
 (function(){
-
+	"use strict";
 	var BitArray = my.Class({
 
 		STATIC: {},
