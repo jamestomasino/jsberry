@@ -263,9 +263,6 @@
 		},
 
 		_videoClick: function (e) {
-			if (!this.isActive()) {
-				this.activate();
-			}
 
 			if (this._isEnded != true || this._canReplay == true) {
 				this._isEnded = false;
@@ -273,6 +270,10 @@
 				if ( this._video != null ) {
 					this._videoPlay();
 				} else {
+					if (!this.isActive()) {
+						this.activate();
+					}
+
 					for ( var i = 0; i < VideoWrapper.instances.length; ++i) {
 						var inst = VideoWrapper.instances[i];
 						if ( inst.isActive() ) inst.closeVideo();
