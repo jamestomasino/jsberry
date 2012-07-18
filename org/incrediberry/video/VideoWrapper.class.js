@@ -330,7 +330,7 @@
 		},
 
 		_onComplete: function ( e ) {
-			_isEnded = true;
+			this._isEnded = true;
 
 			for (var i = 0; i < this._userCompleteCallbacks.length; ++i ) {
 				var callback = this._userCompleteCallbacks[i];
