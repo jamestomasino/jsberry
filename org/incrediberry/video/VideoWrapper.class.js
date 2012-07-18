@@ -283,7 +283,7 @@
 					}
 
 					this._constructHTML(true);
-					this._userCuePoints.setVideo ( _video );
+					this._userCuePoints.setVideo ( this._video );
 
 					this.Evt.addEvent ( this._video, 'canplay', this._videoPlayDelegate );
 					this._video.load(); // Unnecessary step in chrome. Should help on iPad

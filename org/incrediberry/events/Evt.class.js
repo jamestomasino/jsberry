@@ -24,7 +24,7 @@
 				else
 				{
 					var i = Evt._listEvents.length; while (i--) {
-						if ( Evt._listEvents[i][0] == arguments[0] && Evt._listEvents[i][1] == arguments[1] && Evt._listEvents[i][2] == arguments[2] && && Evt._listEvents[i][3] == arguments[3] )
+						if ( Evt._listEvents[i][0] == arguments[0] && Evt._listEvents[i][1] == arguments[1] && Evt._listEvents[i][2] == arguments[2] && Evt._listEvents[i][3] == arguments[3] )
 						Evt._listEvents.splice(i, 1);
 						break;
 					}
