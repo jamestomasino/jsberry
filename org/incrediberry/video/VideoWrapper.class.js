@@ -52,10 +52,10 @@
 
 			this._userCuePoints.addEventListener ( this.VideoCuePoints.CUE_POINT_EVENT, this.Delegate.createDelegate ( this, this._onCuePoint ) );
 
-			if (objectsToBind != null) {
-				if ( this.ArrayUtils.isArray (objectsToBind ) ) {
-					for ( var i = 0; i < objectsToBind.length; ++i ) {
-						var obj = objectsToBind[i];
+			if (this._objectsToBind != null) {
+				if ( this.ArrayUtils.isArray (this._objectsToBind ) ) {
+					for ( var i = 0; i < this._objectsToBind.length; ++i ) {
+						var obj = this._objectsToBind[i];
 						if ( typeof(obj) == 'string' ) {
 							var jqObj = this.jQuery(obj);
 							if (jqObj != null) {
@@ -68,8 +68,8 @@
 							}
 						}
 					}
-				} else if ( typeof(objectsToBind) == 'string' ) {
-					var jqObj = this.jQuery(objectsToBind);
+				} else if ( typeof(this._objectsToBind) == 'string' ) {
+					var jqObj = this.jQuery(this._objectsToBind);
 					if (jqObj != null) {
 						this._objectsToBind.push ( jqObj );
 					}
