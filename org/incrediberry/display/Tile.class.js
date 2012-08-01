@@ -11,8 +11,8 @@
 		},
 
 		constructor: function( domObj, width, height, id ) {
-			Namespace.import (this, 'org.tomasino.utils.NumberUtils' );
-			Namespace.import (this, 'org.tomasino.data.BitArray' );
+			Namespace.import (this, 'org.incrediberry.utils.NumberUtils' );
+			Namespace.import (this, 'org.incrediberry.data.BitArray' );
 			Namespace.import (this, 'jQuery');
 
 			this._domObj = domObj;

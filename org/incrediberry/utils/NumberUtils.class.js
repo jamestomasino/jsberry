@@ -4,7 +4,7 @@
 	var NumberUtils = my.Class({
 
 		STATIC: {
-			isNumeric = function ( n ) {
+			isNumeric: function ( n ) {
 				return !isNaN(parseFloat(n)) && isFinite(n);
 			}
 		},
