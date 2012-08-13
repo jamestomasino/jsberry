@@ -4,7 +4,7 @@
 
 		STATIC: { },
 
-		constructor: function( r, g, b, h, s, v, l, y ) {
+		constructor: function( r, g, b, h, s, v, l, y, c ) {
 			this.r = r || 0;
 			this.g = g || 0;
 			this.b = b || 0;
@@ -13,6 +13,7 @@
 			this.v = v || 0;
 			this.l = l || 0;
 			this.y = y || 0;
+			this.c = c || 0;
 		},
 
 		getHex: function ( ) {
@@ -75,16 +76,19 @@
 		setR: function ( r ) {
 			this.r = r;
 			this._rgb2hsvly();
+			this._updateC();
 		},
 
 		setG: function ( g ) {
 			this.g = g;
 			this._rgb2hsvly();
+			this._updateC();
 		},
 
 		setB: function ( b ) {
 			this.b = b;
 			this._rgb2hsvly();
+			this._updateC();
 		},
 
 		setH: function ( h ) {
@@ -124,6 +128,30 @@
 			this._updateV();
 		},
 
+		_updateV:  function () {
+			var r = this.r / 255;
+			var g = this.g / 255;
+			var b = this.b / 255;
+			this.v = Math.max(r, g, b);
+		},
+
+		_updateL:  function () {
+			var r = this.r / 255;
+			var g = this.g / 255;
+			var b = this.b / 255;
+			this.l = 0.5 * ( Math.max(r, g, b) +  Math.min(r, g, b) );
+		},
+
+		_updateY: function () {
+			var r = this.r / 255;
+			var g = this.g / 255;
+			var b = this.b / 255;
+			this.y = (0.30 * r) + ( 0.59 * g ) + ( 0.11 * b );
+		},
+
+		_updateC: function () {
+			this.c = this.s * this.v;
+		},
 
 		_rgb2hsvly: function () {
 			// Get basics for conversion
@@ -171,6 +199,7 @@
 			var c = s * v;
 			var h1 = h / 60;
 			var x = c * ( 1 - Math.abs( h1 % 2 - 1) );
+			var rgb;
 
 			if (h1 < 1) {
 				rgb = [ c, x, 0 ];
@@ -196,6 +225,7 @@
 			this.r = rgb[0];
 			this.g = rgb[1];
 			this.b = rgb[2];
+			this.c = c;
 		},
 
 
@@ -206,6 +236,7 @@
 			var c = (1 - Math.abs( 2 * l - 1 ) ) * s;
 			var h1 = h / 60;
 			var x = c * ( 1 - Math.abs( h1 % 2 - 1) );
+			var rgb;
 
 			if (h1 < 1) {
 				rgb = [ c, x, 0 ];
@@ -227,21 +258,11 @@
 			rgb[1] = Math.round(rgb[1] * 255);
 			rgb[2] = Math.round(rgb[2] * 255);
 
+
 			this.r = rgb[0];
 			this.g = rgb[1];
 			this.b = rgb[2];
-		},
-
-		_updateV:  function () {
-			this.V = Math.max(this.r, this.g, this.b);
-		},
-
-		_updateL:  function () {
-			this.L = 0.5 * ( Math.max(this.r, this.g, this.b) + Math.min(this.r, this.g, this.b ) );
-		},
-
-		_updateY: function () {
-			this.y = (0.30 * this.r) + ( 0.59 * this.g ) + ( 0.11 * this.b );
+			this.c = c;
 		},
 
 		_hcy2rgb: function ( ) {
@@ -250,6 +271,7 @@
 			var y = this.y;
 			var h1 = h / 60;
 			var x = c * ( 1 - Math.abs( h1 % 2 - 1) );
+			var rgb;
 
 			if (h1 < 1) {
 				rgb = [ c, x, 0 ];
@@ -277,9 +299,8 @@
 			this.b = rgb[2];
 		},
 
-		clone: function ()
-		{
-			return new Color ( this.r, this.g, this.b, this.h, this.s, this.v, this.l, this.y );
+		clone: function () {
+			return new Color ( this.r, this.g, this.b, this.h, this.s, this.v, this.l, this.y, this.c );
 		}
 
 	});
