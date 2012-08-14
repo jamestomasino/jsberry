@@ -39,6 +39,7 @@
 			this.b = parseInt( rgbHex.slice(4,6), 16 );
 
 			this._rgb2hsvly();
+			this._updateC();
 		},
 
 		getR: function ( ) {
@@ -74,25 +75,25 @@
 		},
 
 		setR: function ( r ) {
-			this.r = r;
+			this.r = r % 255;
 			this._rgb2hsvly();
 			this._updateC();
 		},
 
 		setG: function ( g ) {
-			this.g = g;
+			this.g = g % 255;
 			this._rgb2hsvly();
 			this._updateC();
 		},
 
 		setB: function ( b ) {
-			this.b = b;
+			this.b = b % 255;
 			this._rgb2hsvly();
 			this._updateC();
 		},
 
 		setH: function ( h ) {
-			this.h = h;
+			this.h = h % 1;
 			this._hsv2rgb();
 			this._updateL();
 			this._updateY();
@@ -100,7 +101,7 @@
 		},
 
 		setS: function ( s ) {
-			this.s = s;
+			this.s = Math.max( 0, Math.min( 1, s));
 			this._hsv2rgb();
 			this._updateL();
 			this._updateY();
@@ -108,21 +109,21 @@
 		},
 
 		setV: function ( v ) {
-			this.v = v;
+			this.v = Math.max( 0, Math.min( 1, v));
 			this._hsv2rgb();
 			this._updateL();
 			this._updateY();
 		},
 
 		setL: function ( l ) {
-			this.l = l;
+			this.l = Math.max( 0, Math.min( 1, l));
 			this._hsl2rgb();
 			this._updateY();
 			this._updateV();
 		},
 
 		setY: function ( y ) {
-			this.y = y;
+			this.y = Math.max( 0, Math.min( 1, y));
 			this._hcy2rgb();
 			this._updateL();
 			this._updateV();
@@ -287,12 +288,13 @@
 				rgb = [ c, 0, x ];
 			}
 
-			var m = y - ( 0.30 * rgb[0] ) + ( 0.59 * rgb[1] ) + ( 0.11 * rgb[2] );
+			var m = y - (( 0.30 * rgb[0] ) + ( 0.59 * rgb[1] ) + ( 0.11 * rgb[2] ));
 			rgb = [rgb[0] + m, rgb[1] + m, rgb[2] + m];
 
-			rgb[0] = Math.round(rgb[0] * 255);
-			rgb[1] = Math.round(rgb[1] * 255);
-			rgb[2] = Math.round(rgb[2] * 255);
+			// Limit this or it can explode.
+			rgb[0] = Math.min(Math.round(rgb[0] * 255), 255);
+			rgb[1] = Math.min(Math.round(rgb[1] * 255), 255);
+			rgb[2] = Math.min(Math.round(rgb[2] * 255), 255);
 
 			this.r = rgb[0];
 			this.g = rgb[1];
