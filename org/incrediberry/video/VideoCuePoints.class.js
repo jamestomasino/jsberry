@@ -72,7 +72,7 @@
 
 		getPrevCuePoint: function ( buffer ) {
 			// This function needs a buffer after a cuepoint where it can jump back earlier even if it is after
-			var bufferPrevTime = (buffer === null) ? 1 : buffer;
+			var bufferPrevTime = ( typeof (buffer) != 'undefined' ) ? buffer : 1;
 
 			// If no video loaded or not started, return null
 			if ( this.time == -1 || this.video === null ) return null;
