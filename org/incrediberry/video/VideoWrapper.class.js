@@ -5,6 +5,7 @@
 
 		STATIC: {
 			instances: [],
+			EVENT_VIDEO_ACTIVE: "event_video_active",
 			getActiveWrapper: function () {
 				for ( var i = 0; i < VideoWrapper.instances.length; ++i) {
 					var inst = VideoWrapper.instances[i];
@@ -24,10 +25,11 @@
 			VideoWrapper.Super.call(this);
 
 			// Store references for removeEventListeners later
-			this._videoPlayDelegate = this.Delegate.createDelegate ( this, this._videoPlay);
-			this._onPlayDelegate    = this.Delegate.createDelegate ( this, this._onPlay );
-			this._onPauseDelegate   = this.Delegate.createDelegate ( this, this._onPause );
-			this._onEndedDelegate   = this.Delegate.createDelegate ( this, this._onComplete );
+			this._videoActivateDelegate = this.Delegate.createDelegate ( this, this._activateComplete );
+			this._videoPlayDelegate     = this.Delegate.createDelegate ( this, this._videoPlay);
+			this._onPlayDelegate        = this.Delegate.createDelegate ( this, this._onPlay );
+			this._onPauseDelegate       = this.Delegate.createDelegate ( this, this._onPause );
+			this._onEndedDelegate       = this.Delegate.createDelegate ( this, this._onComplete );
 
 			this._video                 = null;
 			this._image                 = null;
@@ -52,10 +54,10 @@
 
 			this._userCuePoints.addEventListener ( this.VideoCuePoints.CUE_POINT_EVENT, this.Delegate.createDelegate ( this, this._onCuePoint ) );
 
-			if (this._objectsToBind != null) {
-				if ( this.ArrayUtils.isArray (this._objectsToBind ) ) {
-					for ( var i = 0; i < this._objectsToBind.length; ++i ) {
-						var obj = this._objectsToBind[i];
+			if (objectsToBind != null) {
+				if ( this.ArrayUtils.isArray (objectsToBind ) ) {
+					for ( var i = 0; i < objectsToBind.length; ++i ) {
+						var obj = objectsToBind[i];
 						if ( typeof(obj) == 'string' ) {
 							var jqObj = this.jQuery(obj);
 							if (jqObj != null) {
@@ -68,8 +70,8 @@
 							}
 						}
 					}
-				} else if ( typeof(this._objectsToBind) == 'string' ) {
-					var jqObj = this.jQuery(this._objectsToBind);
+				} else if ( typeof(objectsToBind) == 'string' ) {
+					var jqObj = this.jQuery(objectsToBind);
 					if (jqObj != null) {
 						this._objectsToBind.push ( jqObj );
 					}
@@ -138,16 +140,52 @@
 			this._userPlayCallbacks.push ( callback );
 		},
 
+		onPlayRemove: function( callback ) {
+			if ( callback !== null ) {
+				var i = this._userPlayCallbacks.length; while (i--) {
+					if ( this._userPlayCallbacks[i] == callback ) {
+						this._userPlayCallbacks.splice(i,1);
+					}
+				}
+			} else {
+				this._userPlayCallbacks = [];
+			}
+		},
+
 		onPause: function ( callback ) {
 			this._userPauseCallbacks.push ( callback );
+		},
+
+		onPauseRemove: function( callback ) {
+			if ( callback !== null ) {
+				var i = this._userPauseCallbacks.length; while (i--) {
+					if ( this._userPauseCallbacks[i] == callback ) {
+						this._userPauseCallbacks.splice(i,1);
+					}
+				}
+			} else {
+				this._userPauseCallbacks = [];
+			}
 		},
 
 		onComplete: function ( callback ) {
 			this._userCompleteCallbacks.push ( callback );
 		},
 
+		onCompleteRemove: function( callback ) {
+			if ( callback !== null ) {
+				var i = this._userCompleteCallbacks.length; while (i--) {
+					if ( this._userCompleteCallbacks[i] == callback ) {
+						this._userCompleteCallbacks.splice(i,1);
+					}
+				}
+			} else {
+				this._userCompleteCallbacks = [];
+			}
+		},
+
 		bind: function ( type, callback ) {
-			if ( type != null && callback != null ) {
+			if ( type !== null && callback !== null ) {
 				var foundDuplicate = false;
 				for (var i = 0; i < this._boundEvents.length; ++i ) {
 					var bindObj = this._boundEvents[i];
@@ -231,13 +269,33 @@
 		activate: function () {
 			for ( var i = 0; i < VideoWrapper.instances.length; ++i) {
 				var inst = VideoWrapper.instances[i];
-				if ( inst.isActive() ) inst.closeVideo();
+				if ( inst.isActive() && inst != this ) inst.closeVideo();
 			}
 
 			this._constructHTML(true);
 			this._userCuePoints.setVideo ( this._video );
 
-			this._video.load();
+			this._activate();
+		},
+
+		_activate: function () {
+			this._video.play();
+			var dgPause = this.Delegate.createDelegate (this, this.pause );
+			setTimeout( dgPause, 1 );
+
+			if (this._video.readyState !== 4) {
+				this._video.addEventListener ('canplaythrough', this._videoActivateDelegate, false );
+				this._video.addEventListener ('load', this._videoActivateDelegate, false );
+			} else {
+				this.dispatchEvent ( VideoWrapper.EVENT_VIDEO_ACTIVE );
+			}
+		},
+
+		_activateComplete: function () {
+			this._video.removeEventListener ('canplaythrough', this._videoActivateDelegate, false );
+			this._video.removeEventListener ('load', this._videoActivateDelegate, false );
+
+			this.dispatchEvent ( VideoWrapper.EVENT_VIDEO_ACTIVE );
 		},
 
 		_removeBindings: function () {
@@ -270,23 +328,14 @@
 			if (this._isEnded != true || this._canReplay == true) {
 				this._isEnded = false;
 
-				if ( this._video != null ) {
+				if ( this.isActive() ) {
 					this._videoPlay();
 				} else {
+					this.addEventListener ( VideoWrapper.EVENT_VIDEO_ACTIVE, this._videoPlayDelegate );
+
 					if (!this.isActive()) {
 						this.activate();
 					}
-
-					for ( var i = 0; i < VideoWrapper.instances.length; ++i) {
-						var inst = VideoWrapper.instances[i];
-						if ( inst.isActive() ) inst.closeVideo();
-					}
-
-					this._constructHTML(true);
-					this._userCuePoints.setVideo ( this._video );
-
-					this.Evt.addEvent ( this._video, 'canplay', this._videoPlayDelegate );
-					this._video.load(); // Unnecessary step in chrome. Should help on iPad
 
 					if ( !this._keepEvents ) {
 						this._removeBindings();
