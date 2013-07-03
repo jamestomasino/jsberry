@@ -75,19 +75,19 @@
 		},
 
 		setR: function ( r ) {
-			this.r = r % 255;
+			this.r = r % 256;
 			this._rgb2hsvly();
 			this._updateC();
 		},
 
 		setG: function ( g ) {
-			this.g = g % 255;
+			this.g = g % 256;
 			this._rgb2hsvly();
 			this._updateC();
 		},
 
 		setB: function ( b ) {
-			this.b = b % 255;
+			this.b = b % 256;
 			this._rgb2hsvly();
 			this._updateC();
 		},
